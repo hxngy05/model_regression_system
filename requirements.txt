@@ -1,0 +1,13 @@
+# --- Phase 1: Core LLM & Schema Validation ---
+openai>=1.40.0
+pydantic>=2.7.0
+PyYAML>=6.0.1
+
+# --- Phase 3 & 4: Alerting & Reporting ---
+requests>=2.31.0          # For sending Slack webhook alerts
+jinja2>=3.1.0             # For rendering clean HTML diff reports[cite: 1]
+
+# --- Optional / Future Phases ---
+# deepeval>=1.0.0         # Optional: If you use DeepEval for advanced LLM evaluation[cite: 1]
+# ragas>=0.1.0            # Optional: If you use RAGAS for evaluation metrics[cite: 1]
+streamlit>=1.35.0         # Optional: For building a visual dashboard[cite: 1]

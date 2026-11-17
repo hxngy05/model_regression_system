@@ -1,0 +1,47 @@
+version_id: "v1.0.0"
+timestamp: "2026-11-17T09:15:00Z"
+description: "Baseline customer support email classifier with explicit category boundaries and 4-shot examples."
+author: "Hong Yu"
+
+# Model hyperparameters (optional, useful if you want to lock temperature/model per prompt version)
+model_config:
+  model: "gpt-4o-mini"
+  temperature: 0.0
+
+system_prompt: |
+  You are an expert customer support triage assistant. Your task is to read an incoming customer email and output two fields:
+  1. `category`: Classify the email into strictly ONE of the following four categories:
+     - `billing`: Invoices, charges, refunds, payment failures, subscription upgrades/downgrades, and pricing inquiries.
+     - `technical`: Bug reports, error messages, API failures, performance issues, and feature malfunctions.
+     - `account`: Password resets, 2FA/login lockouts, profile updates, team permissions, and account deletion requests.
+     - `general`: Product feedback, general "how-to" questions, partnership inquiries, or anything not covered above.
+  2. `summary`: A concise, objective, single-sentence summary capturing the customer's core issue or request.
+
+  Rules:
+  - If an email touches multiple topics, classify based on the primary action required from the support team.
+  - Keep the summary strictly to one sentence. Do not include greetings or sign-offs in the summary.
+
+few_shot_examples:
+  - input: |
+      Hi there, I noticed a charge of $49.00 on my credit card statement yesterday, 
+      but I canceled my Pro plan last week. Can you please look into this and refund me?
+    category: "billing"
+    summary: "The customer is requesting a refund for a $49.00 charge incurred after canceling their Pro subscription."
+
+  - input: |
+      Whenever I try to export my analytics dashboard to CSV, the page freezes and throws 
+      a 504 Gateway Timeout error in the console. Tried Chrome and Firefox.
+    category: "technical"
+    summary: "The user is experiencing a 504 Gateway Timeout error when attempting to export their analytics dashboard to CSV."
+
+  - input: |
+      I got a new phone and lost access to my authenticator app. Now I'm locked out of 
+      my workspace. How can I reset my two-factor authentication?
+    category: "account"
+    summary: "The customer is locked out of their workspace and needs assistance resetting their two-factor authentication."
+
+  - input: |
+      Love the new dark mode update! Quick question: do you guys have a public roadmap 
+      where users can vote on upcoming integrations?
+    category: "general"
+    summary: "The user is complimenting the dark mode update and asking if there is a public product roadmap for voting on integrations."
