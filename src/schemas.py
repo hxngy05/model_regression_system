@@ -22,3 +22,22 @@ class PromptConfig(BaseModel):
     author: str | None = None
     system_prompt: str
     few_shot_examples: list[dict] = []
+
+class DifficultyEnum(str, Enum):
+    EASY = "easy"
+    MEDIUM = "medium"
+    HARD = "hard"
+
+class GoldenTestCase(BaseModel):
+    id: str = Field(..., description="Stable unique identifier, e.g., TC-001")
+    input_text: str = Field(..., description="Raw customer support email")
+    expected_category: CategoryEnum
+    expected_summary_gist: str = Field(..., description="Human-verified ideal one-sentence summary")
+    expected_difficulty: DifficultyEnum
+    notes: str = Field(..., description="Context explaining why this test case matters")
+
+class GoldenDataset(BaseModel):
+    dataset_version: str
+    created_at: str
+    description: str | None = None
+    test_cases: list[GoldenTestCase]

@@ -1,0 +1,407 @@
+{
+  "dataset_version": "v1.0.0",
+  "created_at": "2026-11-17T15:16:00+08:00",
+  "description": "Initial human-curated golden dataset with multi-category and edge-case coverage.",
+  "test_cases": [
+    {
+      "id": "TC-001",
+      "input_text": "I need help to see the current status of the refund",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer is asking for the current status of their refund.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: track_refund)"
+    },
+    {
+      "id": "TC-002",
+      "input_text": "opening new gold account for daughter",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer wants to open a new Gold account for their daughter.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: create_account)"
+    },
+    {
+      "id": "TC-003",
+      "input_text": "I want to delete an item from purchase Order #49281, help me",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer needs help with removing an item from purchase Order #49281.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: change_order)"
+    },
+    {
+      "id": "TC-004",
+      "input_text": "editing data on premium acocunt",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer wants to edit data on their premium account.",
+      "expected_difficulty": "medium",
+      "notes": "Bootstrapped from Bitext (intent: edit_account)"
+    },
+    {
+      "id": "TC-005",
+      "input_text": "I don't have a premium account, I want to open one",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer does not have a premium account and they would like to open one.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: create_account)"
+    },
+    {
+      "id": "TC-006",
+      "input_text": "need help to file an customer claim against ur organization",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer needs help with filing a customer claim against our organization.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: complaint)"
+    },
+    {
+      "id": "TC-007",
+      "input_text": "i dont know how i can notify of an error with online payment",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer wants to know how to report an error with an online payment.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: payment_issue)"
+    },
+    {
+      "id": "TC-008",
+      "input_text": "what do I have to do to talk with bloody customer support?",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer would like to speak with customer support.",
+      "expected_difficulty": "medium",
+      "notes": "Bootstrapped from Bitext (intent: contact_customer_service)"
+    },
+    {
+      "id": "TC-009",
+      "input_text": "there are troubles setting up a differnet delivery address",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer is having trouble setting up a different delivery address.",
+      "expected_difficulty": "medium",
+      "notes": "Bootstrapped from Bitext (intent: set_up_shipping_address)"
+    },
+    {
+      "id": "TC-010",
+      "input_text": "I am waiting for a compensation of  $45.00",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer is following up on a pending $45.00 refund.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: track_refund)"
+    },
+    {
+      "id": "TC-011",
+      "input_text": "need help to report an issue with payment",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer needs help to report an issue with payment.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: payment_issue)"
+    },
+    {
+      "id": "TC-012",
+      "input_text": "how to ask for a rebate of my money",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer wants a refund of their money.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: get_refund)"
+    },
+    {
+      "id": "TC-013",
+      "input_text": "I do not know what I need to do to demand a refund",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer is asking how to request a refund.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: get_refund)"
+    },
+    {
+      "id": "TC-014",
+      "input_text": "i have got to download my invoice from Sarah Jerkins",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer has to download their invoice from Sarah Jerkins.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: get_invoice)"
+    },
+    {
+      "id": "TC-015",
+      "input_text": "can you show me the current status of Order #49281?",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer would like to see the current status of Order #49281.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: track_order)"
+    },
+    {
+      "id": "TC-016",
+      "input_text": "help me get the bill from George Washington",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer would like to retrieve the bill from George Washington.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: get_invoice)"
+    },
+    {
+      "id": "TC-017",
+      "input_text": "can ya give me information about an addres update",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer would like information with regards to updating of address.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: change_shipping_address)"
+    },
+    {
+      "id": "TC-018",
+      "input_text": "I need assistance acquiring a product",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer needs assistance acquiring a product.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: place_order)"
+    },
+    {
+      "id": "TC-019",
+      "input_text": "acquire several items",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer wants to acquire several items.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: place_order)"
+    },
+    {
+      "id": "TC-020",
+      "input_text": "could ya help me infofming of a sign-up issue",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer is asking for help reporting a sign-up issue.",
+      "expected_difficulty": "medium",
+      "notes": "Bootstrapped from Bitext (intent: registration_problems)"
+    },
+    {
+      "id": "TC-021",
+      "input_text": "want help checking how soon can I expect myy product",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer wants to know how soon they can receive their product.",
+      "expected_difficulty": "medium",
+      "notes": "Bootstrapped from Bitext (intent: delivery_period)"
+    },
+    {
+      "id": "TC-022",
+      "input_text": "want asistance checking the eta of the Order #49281",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer wants to check the expected delivery date for Order #49281.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: track_order)"
+    },
+    {
+      "id": "TC-023",
+      "input_text": "have a problem with the removal of my Enterprise account",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer is facing issues removing his Enterprise account.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: delete_account)"
+    },
+    {
+      "id": "TC-024",
+      "input_text": "i have to receive the newsletter how to do it",
+      "expected_category": "general",
+      "expected_summary_gist": "The customer wants to know how to subscribe to the newsletter.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: newsletter_subscription)"
+    },
+    {
+      "id": "TC-025",
+      "input_text": "assistance checking the early exit charges",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer would like to check the early exit charges.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: check_cancellation_fee)"
+    },
+    {
+      "id": "TC-026",
+      "input_text": "I am trying to list your available payment methods",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer wants to know all payment methods we support.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: check_payment_methods)"
+    },
+    {
+      "id": "TC-027",
+      "input_text": "I don't know what I have to do to cancel my Pro account",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer doesn't know what they need to do to cancel their Pro account.",
+      "expected_difficulty": "hard",
+      "notes": "Bootstrapped from Bitext (intent: delete_account)"
+    },
+    {
+      "id": "TC-028",
+      "input_text": "i can no longer arford purchase Order #49281",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer can no longer afford purchase Order #49281.",
+      "expected_difficulty": "medium",
+      "notes": "Bootstrapped from Bitext (intent: cancel_order)"
+    },
+    {
+      "id": "TC-029",
+      "input_text": "how do I notify of a signup problem?",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer is facing a signup problem.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: registration_problems)"
+    },
+    {
+      "id": "TC-030",
+      "input_text": "help using the Pro profile",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer needs help using the Pro profile.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: switch_account)"
+    },
+    {
+      "id": "TC-031",
+      "input_text": "changing data on pro account",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer wants to change data on their Pro account.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: edit_account)"
+    },
+    {
+      "id": "TC-032",
+      "input_text": "how to switch to the Pro account",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer would like to know how to switch to the Pro account.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: switch_account)"
+    },
+    {
+      "id": "TC-033",
+      "input_text": "I do not know how I can restore the apss of my user profile",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer wants to know how to restore the password for their user profile.",
+      "expected_difficulty": "medium",
+      "notes": "Bootstrapped from Bitext (intent: recover_password)"
+    },
+    {
+      "id": "TC-034",
+      "input_text": "I need help to restore my user key",
+      "expected_category": "account",
+      "expected_summary_gist": "The customer needs help to restore their user key.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: recover_password)"
+    },
+    {
+      "id": "TC-035",
+      "input_text": "there is an error trying to edit the shipping address",
+      "expected_category": "technical",
+      "expected_summary_gist": "The customer is facing an error while trying to edit the shipping address.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: change_shipping_address)"
+    },
+    {
+      "id": "TC-036",
+      "input_text": "there are errors setting up a delivery address",
+      "expected_category": "technical",
+      "expected_summary_gist": "The customer is facing errors setting up their delivery address.",
+      "expected_difficulty": "easy",
+      "notes": "Bootstrapped from Bitext (intent: set_up_shipping_address)"
+    },
+    {
+      "id": "TC-037",
+      "input_text": "Hi support, our webhook endpoint has been returning 502 Bad Gateway errors for the last 40 minutes whenever a user triggers a sync. Can you check your EU-West servers?",
+      "expected_category": "technical",
+      "expected_summary_gist": "The user reports persistent 502 Bad Gateway errors on their webhook endpoint during syncs on EU-West servers.",
+      "expected_difficulty": "easy",
+      "notes": "Hand-crafted technical incident email to balance technical category."
+    },
+    {
+      "id": "TC-038",
+      "input_text": "The mobile app crashes immediately on iOS 19.1 every time I tap the 'Export PDF' button. Reinstalling didn't help.",
+      "expected_category": "technical",
+      "expected_summary_gist": "The customer's iOS mobile app crashes consistently when tapping the Export PDF button.",
+      "expected_difficulty": "easy",
+      "notes": "Hand-crafted client-side bug report."
+    },
+    {
+      "id": "TC-039",
+      "input_text": "Getting SSL_ERROR_RX_RECORD_TOO_LONG when connecting to api.example.com via Python requests. Did your TLS certificate expire?",
+      "expected_category": "technical",
+      "expected_summary_gist": "The developer is encountering an SSL error when connecting to the API and asks if the TLS certificate expired.",
+      "expected_difficulty": "easy",
+      "notes": "Hand-crafted API/SSL technical inquiry."
+    },
+    {
+      "id": "TC-040",
+      "input_text": "Search indexing in our workspace has been stuck at 0% since yesterday morning and newly uploaded docs aren't showing up.",
+      "expected_category": "technical",
+      "expected_summary_gist": "Workspace search indexing is stuck at 0%, preventing newly uploaded documents from appearing.",
+      "expected_difficulty": "easy",
+      "notes": "Hand-crafted platform performance/indexing bug."
+    },
+    {
+      "id": "TC-041",
+      "input_text": "CSV bulk import fails silently with no error toast when the file exceeds 5,000 rows.",
+      "expected_category": "technical",
+      "expected_summary_gist": "Bulk CSV imports fail silently without an error message for files larger than 5,000 rows.",
+      "expected_difficulty": "easy",
+      "notes": "Hand-crafted silent failure bug report."
+    },
+    {
+      "id": "TC-042",
+      "input_text": "Our SSO SAML assertion is throwing an InvalidAudience error after your dashboard update last night.",
+      "expected_category": "technical",
+      "expected_summary_gist": "SSO SAML authentication is failing with an InvalidAudience error following a recent dashboard update.",
+      "expected_difficulty": "medium",
+      "notes": "Tests distinction between SSO configuration bug (technical) vs. simple user password reset (account)."
+    },
+    {
+      "id": "TC-043",
+      "input_text": "Dark mode charts render white text on a white background in Safari 18, making all metrics unreadable.",
+      "expected_category": "technical",
+      "expected_summary_gist": "Dark mode charts display unreadable white-on-white text in Safari 18.",
+      "expected_difficulty": "easy",
+      "notes": "Hand-crafted UI rendering bug."
+    },
+    {
+      "id": "TC-044",
+      "input_text": "Rate limit headers (X-RateLimit-Remaining) are returning negative numbers on our Enterprise API key.",
+      "expected_category": "technical",
+      "expected_summary_gist": "API rate limit headers are returning negative values for an Enterprise API key.",
+      "expected_difficulty": "easy",
+      "notes": "Hand-crafted API edge-case bug."
+    },
+    {
+      "id": "TC-045",
+      "input_text": "500 error",
+      "expected_category": "technical",
+      "expected_summary_gist": "The user is reporting a 500 server error with no additional details.",
+      "expected_difficulty": "hard",
+      "notes": "Edge case: extremely short 2-word email testing concise summarization without hallucinating details."
+    },
+    {
+      "id": "TC-046",
+      "input_text": "Oh brilliant, I LOVE getting charged $299 twice in one morning! Best Tuesday ever. Fix this before I call my bank.",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer is sarcastically reporting a duplicate $299 charge and demanding an immediate fix.",
+      "expected_difficulty": "hard",
+      "notes": "Edge case: heavy sarcasm masking a duplicate charge billing complaint."
+    },
+    {
+      "id": "TC-047",
+      "input_text": "Hola team, my invoice #9921 shows the wrong VAT number—por favor update it and send a corrected PDF.",
+      "expected_category": "billing",
+      "expected_summary_gist": "The customer requests a corrected PDF for invoice #9921 with an updated VAT number.",
+      "expected_difficulty": "hard",
+      "notes": "Edge case: mixed English/Spanish language email."
+    },
+    {
+      "id": "TC-048",
+      "input_text": "I can't log into my account because 2FA SMS codes aren't arriving, AND I noticed you billed me yesterday while I'm locked out. Please unlock my login first so I can check my workspace.",
+      "expected_category": "account",
+      "expected_summary_gist": "The user is locked out due to missing 2FA SMS codes and wants login access restored first while also noting a recent charge.",
+      "expected_difficulty": "hard",
+      "notes": "Edge case: dual-category ambiguity (account + billing) testing primary action tie-breaker rule."
+    },
+    {
+      "id": "TC-049",
+      "input_text": "Hey! Quick question—do you offer non-profit discounts if we decide to upgrade to the Team plan next quarter?",
+      "expected_category": "billing",
+      "expected_summary_gist": "The user is inquiring whether non-profit pricing discounts are available for a future Team plan upgrade.",
+      "expected_difficulty": "medium",
+      "notes": "Edge case: pricing/discount inquiry testing boundary between billing and general."
+    },
+    {
+      "id": "TC-050",
+      "input_text": "Our production database sync has been completely down for 3 hours causing data loss! Also, where can I download last month's receipt?",
+      "expected_category": "technical",
+      "expected_summary_gist": "The customer reports a 3-hour production database sync outage causing data loss and also asks where to download last month's receipt.",
+      "expected_difficulty": "hard",
+      "notes": "Edge case: critical technical outage paired with minor billing question."
+    }
+  ]
+}
