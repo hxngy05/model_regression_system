@@ -7,8 +7,9 @@ from uuid import uuid4
 
 from src.differ import compare_evaluation_runs
 from src.evaluator import run_evaluation_suite
-from src.schemas import RunEvaluationSummary, TestCaseEvaluationResult
-from src.storage import get_previous_run, init_db, save_evaluation_run
+from src.reporter import generate_html_diff_report
+from src.schemas import RunComparisonResult, RunEvaluationSummary, TestCaseEvaluationResult
+from src.storage import get_previous_run, get_recent_runs, init_db, save_evaluation_run
 from src.utils import load_golden_dataset, load_prompt_version
 
 
@@ -48,6 +49,19 @@ def build_run_summary(
         results=results,
     )
 
+def build_initial_baseline_comparison(current_run: RunEvaluationSummary) -> RunComparisonResult:
+    """Creates a pass-status comparison object when no prior baseline run exists."""
+    return RunComparisonResult(
+        current_run_id=current_run.run_id,
+        baseline_run_id="NONE",
+        pass_rate_delta=0.0,
+        regressions_count=0,
+        improvements_count=0,
+        regressions=[],
+        improvements=[],
+        severity_status="pass",
+        alert_message="Initial baseline run recorded; no previous run available for diffing.",
+    )
 
 async def execute_pipeline(
     prompt_file: str,
@@ -88,16 +102,27 @@ async def execute_pipeline(
     previous_run = get_previous_run(exclude_run_id=current_summary.run_id)
     if previous_run is None:
         print("No prior run found in SQLite. Recorded this run as the initial baseline.")
-        return
+        comparison = build_initial_baseline_comparison(current_summary)
+    else:
+        comparison = compare_evaluation_runs(
+            current_run=current_summary,
+            baseline_run=previous_run,
+            warning_threshold=warning_threshold,
+            critical_threshold=critical_threshold,
+        )
+        print("\n--- Diff Against Baseline ---")
+        print(json.dumps(comparison.model_dump(), indent=2))
 
-    comparison = compare_evaluation_runs(
+    # 5. Generate HTML diff report with recent run history (last N runs)
+    recent_runs = get_recent_runs(limit=7)
+    report_path = generate_html_diff_report(
         current_run=current_summary,
+        comparison=comparison,
+        recent_runs=recent_runs,
         baseline_run=previous_run,
-        warning_threshold=warning_threshold,
-        critical_threshold=critical_threshold,
+        model_name=prompt_config.model_config.model if hasattr(prompt_config, "model_config") and prompt_config.model_config else "gpt-4o-mini",
     )
-    print("\n--- Diff Against Baseline ---")
-    print(json.dumps(comparison.model_dump(), indent=2))
+    print(f"Generated HTML diff report: {report_path}")
 
 
 def parse_args() -> argparse.Namespace:

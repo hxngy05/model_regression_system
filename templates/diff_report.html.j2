@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Eval Diff Report — {{ current_run.run_id }}</title>
+  <style>
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      margin: 2rem auto;
+      max-width: 1120px;
+      color: #1f2937;
+      background: #f9fafb;
+      line-height: 1.45;
+    }
+    h1, h2 { margin-top: 0; color: #111827; }
+    .card {
+      background: #ffffff;
+      border: 1px solid #e5e7eb;
+      border-radius: 8px;
+      padding: 1.25rem 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .meta-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 0.75rem;
+      font-size: 0.92rem;
+    }
+    .badge {
+      display: inline-block;
+      padding: 0.2rem 0.6rem;
+      border-radius: 999px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge-pass { background: #dcfce7; color: #166534; }
+    .badge-warn { background: #fef3c7; color: #92400e; }
+    .badge-fail { background: #fee2e2; color: #991b1b; }
+    .scorecard {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+      gap: 1rem;
+    }
+    .stat {
+      border: 1px solid #e5e7eb;
+      border-radius: 6px;
+      padding: 0.9rem;
+      background: #f9fafb;
+    }
+    .stat-label { font-size: 0.8rem; color: #6b7280; }
+    .stat-value { font-size: 1.35rem; font-weight: 700; margin-top: 0.2rem; }
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.88rem;
+    }
+    th, td {
+      border: 1px solid #e5e7eb;
+      padding: 0.65rem 0.75rem;
+      text-align: left;
+      vertical-align: top;
+    }
+    th { background: #f3f4f6; font-weight: 600; }
+    .muted { color: #6b7280; font-size: 0.85rem; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem;">
+      <div>
+        <h1>Model Regression Diff Report</h1>
+        <div class="muted">{{ comparison.alert_message }}</div>
+      </div>
+      {% if comparison.severity_status == "fail" %}
+        <span class="badge badge-fail">FAIL</span>
+      {% elif comparison.severity_status == "warn" %}
+        <span class="badge badge-warn">WARN</span>
+      {% else %}
+        <span class="badge badge-pass">PASS</span>
+      {% endif %}
+    </div>
+
+    <hr style="border: none; border-top: 1px solid #e5e7eb; margin: 1rem 0;" />
+
+    <div class="meta-grid">
+      <div><strong>Current Run:</strong> {{ current_run.run_id }}</div>
+      <div><strong>Baseline Run:</strong> {{ baseline_run.run_id if baseline_run else "None (First Run)" }}</div>
+      <div><strong>Prompt Version:</strong> {{ current_run.prompt_version }}</div>
+      <div><strong>Model:</strong> {{ model_name }}</div>
+      <div><strong>Dataset Version:</strong> {{ current_run.dataset_version }}</div>
+      <div><strong>Timestamp (UTC):</strong> {{ current_run.timestamp }}</div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Summary Scorecard (Current vs. Baseline)</h2>
+    <div class="scorecard">
+      <div class="stat">
+        <div class="stat-label">Pass Rate</div>
+        <div class="stat-value">{{ "%.1f"|format(current_run.pass_rate * 100) }}%</div>
+        <div class="muted">
+          {% if baseline_run %}
+            Baseline: {{ "%.1f"|format(baseline_run.pass_rate * 100) }}%
+            ({{ "%+.1f"|format(comparison.pass_rate_delta * 100) }} pp)
+          {% else %}
+            Initial baseline
+          {% endif %}
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Regressions (Pass → Fail)</div>
+        <div class="stat-value">{{ comparison.regressions_count }}</div>
+        <div class="muted">Improvements: {{ comparison.improvements_count }}</div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Avg Summary Score</div>
+        <div class="stat-value">{{ current_run.average_summary_score }} / 5</div>
+        <div class="muted">
+          {% if baseline_run %}
+            Baseline: {{ baseline_run.average_summary_score }} / 5
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+      <div class="stat">
+        <div class="stat-label">Avg Latency</div>
+        <div class="stat-value">{{ current_run.average_latency }}s</div>
+        <div class="muted">
+          {% if baseline_run %}
+            Baseline: {{ baseline_run.average_latency }}s
+          {% else %}
+            —
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <h2>Regressed Test Cases ({{ comparison.regressions | length }})</h2>
+    {% if comparison.regressions %}
+      <table>
+        <thead>
+          <tr>
+            <th style="width: 9%;">Test ID</th>
+            <th style="width: 25%;">Input Email</th>
+            <th style="width: 33%;">Previous Output (Baseline)</th>
+            <th style="width: 33%;">New Output (Current)</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for item in comparison.regressions %}
+          <tr>
+            <td><strong>{{ item.test_id }}</strong><br /><span class="muted">Expected: {{ item.expected_category.value }}</span></td>
+            <td>{{ item.input_text }}</td>
+            <td>
+              <div><strong>Category:</strong> {{ item.old_predicted_category.value }} ({{ item.old_status }})</div>
+              <div style="margin-top: 0.35rem;"><strong>Summary:</strong> {{ item.old_summary }}</div>
+            </td>
+            <td>
+              <div><strong>Category:</strong> {{ item.new_predicted_category.value }} ({{ item.new_status }})</div>
+              <div style="margin-top: 0.35rem;"><strong>Summary:</strong> {{ item.new_summary }}</div>
+              <div class="muted" style="margin-top: 0.35rem;">Summary score delta: {{ "%+d"|format(item.summary_score_delta) }}</div>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    {% else %}
+      <p class="muted">No regressions detected compared to the baseline run.</p>
+    {% endif %}
+  </div>
+
+  <div class="card">
+    <h2>Pass Rate Trend (Last {{ recent_runs | length }} Runs)</h2>
+    {% if chart_points | length >= 2 %}
+      <svg viewBox="0 0 700 220" width="100%" height="220" role="img" aria-label="Pass rate trend across recent runs">
+        <line x1="50" y1="20" x2="50" y2="180" stroke="#9ca3af" stroke-width="1" />
+        <line x1="50" y1="180" x2="670" y2="180" stroke="#9ca3af" stroke-width="1" />
+        <text x="8" y="25" font-size="11" fill="#6b7280">100%</text>
+        <text x="14" y="103" font-size="11" fill="#6b7280">50%</text>
+        <text x="20" y="182" font-size="11" fill="#6b7280">0%</text>
+
+        <polyline
+          fill="none"
+          stroke="#2563eb"
+          stroke-width="2.5"
+          points="{{ polyline_points }}"
+        />
+
+        {% for pt in chart_points %}
+          <circle cx="{{ pt.x }}" cy="{{ pt.y }}" r="4" fill="#1d4ed8" />
+          <text x="{{ pt.x }}" y="198" font-size="10" fill="#4b5563" text-anchor="middle">{{ pt.label }}</text>
+          <text x="{{ pt.x }}" y="{{ pt.y - 8 }}" font-size="10" fill="#111827" text-anchor="middle">{{ pt.pct }}%</text>
+        {% endfor %}
+      </svg>
+    {% else %}
+      <p class="muted">At least 2 evaluation runs are required to plot a trend line.</p>
+    {% endif %}
+  </div>
+</body>
+</html>
