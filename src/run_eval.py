@@ -5,6 +5,7 @@ import json
 from datetime import datetime, timezone
 from uuid import uuid4
 
+from src.alerter import send_slack_alert
 from src.differ import compare_evaluation_runs
 from src.evaluator import run_evaluation_suite
 from src.reporter import generate_html_diff_report
@@ -123,6 +124,17 @@ async def execute_pipeline(
         model_name=prompt_config.model_config.model if hasattr(prompt_config, "model_config") and prompt_config.model_config else "gpt-4o-mini",
     )
     print(f"Generated HTML diff report: {report_path}")
+
+    sent = send_slack_alert(
+        current_run=current_summary,
+        comparison=comparison,
+        baseline_run=previous_run,
+        report_path=report_path,
+    )
+    if sent:
+        print("Sent Slack alert.")
+    else:
+        print("SLACK_WEBHOOK_URL not set; skipped Slack alert.")
 
 
 def parse_args() -> argparse.Namespace:

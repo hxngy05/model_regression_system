@@ -66,19 +66,31 @@ def compare_evaluation_runs(
     alert_message = f"Evaluation passed successfully with {len(improvements)} improvements and 0 critical regressions."
 
     # Note: A negative delta means pass rate dropped
-    drop_amount = -pass_rate_delta
+    drop_amount = max(0.0, -pass_rate_delta)
 
     if drop_amount >= critical_threshold:
         severity_status = "fail"
-        alert_message =(
-            f"CRITICAL REGRESSION DETECTED: Pass rate dropped by {drop_amount * 100:.1f}% "
-            f"(Exceeds {critical_threshold * 100}% threshold). {len(regressions)} regressions found."
+        alert_message = (
+            f"CRITICAL REGRESSION: Pass rate dropped by {drop_amount * 100:.1f} pp "
+            f"(from {baseline_run.pass_rate * 100:.1f}% to {current_run.pass_rate * 100:.1f}%, "
+            f"exceeding {critical_threshold * 100:.1f} pp threshold). "
+            f"{len(regressions)} regression(s), {len(improvements)} improvement(s)."
         )
-    elif drop_amount >= warning_threshold or len(regressions) > 0:
+    elif drop_amount >= warning_threshold:
         severity_status = "warn"
         alert_message = (
-            f"WARNING: Pass rate dropped by {drop_amount * 100:.1f}% "
-            f" or {len(regressions)} regression(s) detected."
+            f"WARNING: Pass rate dropped by {drop_amount * 100:.1f} pp "
+            f"(from {baseline_run.pass_rate * 100:.1f}% to {current_run.pass_rate * 100:.1f}%, "
+            f"exceeding {warning_threshold * 100:.1f} pp threshold). "
+            f"{len(regressions)} regression(s), {len(improvements)} improvement(s)."
+        )
+    else:
+        severity_status = "pass"
+        direction = "increased" if pass_rate_delta > 0 else ("unchanged" if pass_rate_delta == 0 else "changed")
+        alert_message = (
+            f"PASS: Pass rate {direction} ({pass_rate_delta * 100:+.1f} pp, "
+            f"{baseline_run.pass_rate * 100:.1f}% → {current_run.pass_rate * 100:.1f}%). "
+            f"{len(regressions)} regression(s), {len(improvements)} improvement(s)."
         )
 
     return RunComparisonResult(
