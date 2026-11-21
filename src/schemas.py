@@ -41,3 +41,52 @@ class GoldenDataset(BaseModel):
     created_at: str
     description: str | None = None
     test_cases: list[GoldenTestCase]
+
+class TestCaseEvaluationResult(BaseModel):
+    test_id: str
+    input_text: str
+    expected_category: CategoryEnum
+    predicted_category: CategoryEnum
+    category_match: bool
+    expected_summary: str
+    predicted_summary: str
+    summary_score: int = Field(..., ge=1, le=5, description="LLM-as-a-judge score from 1-5")
+    summary_critique: str
+    latency_seconds: float
+    token_usage: int
+    status: str = Field(..., description="'pass' or 'fail'")
+
+class RunEvaluationSummary(BaseModel):
+    run_id: str
+    timestamp: str
+    prompt_version: str
+    dataset_version: str
+    total_cases: int
+    passed_cases: int
+    pass_rate: float
+    average_latency: float
+    average_summary_score: float
+    results: list[TestCaseEvaluationResult]
+
+class FlippedTestCase(BaseModel):
+    test_id: str
+    input_text: str
+    expected_category: CategoryEnum
+    old_predicted_category: CategoryEnum
+    new_predicted_category: CategoryEnum
+    old_status: str
+    new_status: str
+    old_summary: str
+    new_summary: str
+    summary_score_delta: int
+
+class RunComparisonResult(BaseModel):
+    current_run_id: str
+    baseline_run_id: str
+    pass_rate_delta: float = Field(..., description="Current pass rate minus baseline pass rate (e.g., +0.05 or -0.03)")
+    regressions_count: int
+    improvements_count: int
+    regressions: list[FlippedTestCase]
+    improvements: list[FlippedTestCase]
+    severity_status: str = Field(..., description="'pass', 'warn', 'fail'")
+    alert_message: str

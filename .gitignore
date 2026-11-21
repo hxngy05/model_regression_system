@@ -13,3 +13,8 @@ venv/
 
 # Environment variables & secrets
 .env
+
+# Evaluation database & generated reports
+*.db
+*.sqlite*
+reports/
