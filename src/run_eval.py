@@ -2,6 +2,7 @@
 import argparse
 import asyncio
 import json
+import sys
 from datetime import datetime, timezone
 from uuid import uuid4
 
@@ -72,7 +73,7 @@ async def execute_pipeline(
     warning_threshold: float,
     critical_threshold: float,
     drift_threshold: float = 0.05
-) -> None:
+) -> str:
     # 1. Initialize storage and load Phase 1 + Phase 2 inputs
     init_db()
     prompt_config = load_prompt_version(prompt_file)
@@ -148,6 +149,8 @@ async def execute_pipeline(
     else:
         print("SLACK_WEBHOOK_URL not set; skipped Slack alert.")
 
+    return comparison.severity_status
+
 
 def parse_args() -> argparse.Namespace:
     parser = argparse.ArgumentParser(description="Run LLM regression evaluation suite.")
@@ -176,18 +179,24 @@ def parse_args() -> argparse.Namespace:
         default=0.05,
         help="Pass-rate drop threshold from first run in 7-run window (e.g., 0.05 = 5%%)"
     )
+    parser.add_argument(
+        "--fail-on-critical",
+        action="store_true",
+        help="Exit with non-zero status when severity_status is 'fail'",
+    )
     return parser.parse_args()
 
 
 if __name__ == "__main__":
     args = parse_args()
-    asyncio.run(
+    severity_status = asyncio.run(
         execute_pipeline(
             prompt_file=args.prompt,
             dataset_file=args.dataset,
             max_concurrent=args.max_concurrent,
             warning_threshold=args.warning_threshold,
             critical_threshold=args.critical_threshold,
-            drift_threshold=args.drift_threshold
         )
     )
+    if args.fail_on_critical and severity_status == "fail":
+        sys.exit(1)

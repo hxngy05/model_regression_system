@@ -1,0 +1,79 @@
+name: LLM Regression Evaluation
+
+on:
+  pull_request:
+    paths:
+      - "prompts/**"
+      - "data/**"
+      - "src/**"
+      - "templates/**"
+  push:
+    branches:
+      - main
+    paths:
+      - "prompts/**"
+      - "data/**"
+      - "src/**"
+      - "templates/**"
+  workflow_dispatch:
+    inputs:
+      prompt:
+        description: "Prompt filename in prompts/"
+        required: false
+        default: "v1_0_0.yaml"
+      dataset:
+        description: "Dataset filename in data/"
+        required: false
+        default: "golden_dataset_v1.json"
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Restore SQLite evaluation history
+        uses: actions/cache@v4
+        with:
+          path: data/eval_history.db
+          key: eval-history-${{ github.ref_name }}-${{ github.run_id }}
+          restore-keys: |
+            eval-history-${{ github.ref_name }}-
+            eval-history-main-
+            eval-history-
+
+      - name: Run evaluation suite
+        env:
+          OPENAI_API_KEY: ${{ secrets.OPENAI_API_KEY }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        run: |
+          PROMPT_FILE="${{ inputs.prompt || 'v1_0_0.yaml' }}"
+          DATASET_FILE="${{ inputs.dataset || 'golden_dataset_v1.json' }}"
+          python -m src.run_eval \
+            --prompt "$PROMPT_FILE" \
+            --dataset "$DATASET_FILE" \
+            --max-concurrent 5 \
+            --warning-threshold 0.03 \
+            --critical-threshold 0.08 \
+            --drift-threshold 0.05 \
+            --fail-on-critical
+
+      - name: Upload HTML diff report artifact
+        if: always()
+        uses: actions/upload-artifact@v4
+        with:
+          name: eval-diff-report-${{ github.run_number }}
+          path: reports/*.html
+          if-no-files-found: ignore
