@@ -7,6 +7,7 @@ from uuid import uuid4
 
 from src.alerter import send_slack_alert
 from src.differ import compare_evaluation_runs
+from src.drift import detect_rolling_drift
 from src.evaluator import run_evaluation_suite
 from src.reporter import generate_html_diff_report
 from src.schemas import RunComparisonResult, RunEvaluationSummary, TestCaseEvaluationResult
@@ -70,6 +71,7 @@ async def execute_pipeline(
     max_concurrent: int,
     warning_threshold: float,
     critical_threshold: float,
+    drift_threshold: float = 0.05
 ) -> None:
     # 1. Initialize storage and load Phase 1 + Phase 2 inputs
     init_db()
@@ -114,14 +116,23 @@ async def execute_pipeline(
         print("\n--- Diff Against Baseline ---")
         print(json.dumps(comparison.model_dump(), indent=2))
 
-    # 5. Generate HTML diff report with recent run history (last N runs)
+    # 5. Fetch recent runs and detect 7-run rolling drift (AFTER saving current_summary)
     recent_runs = get_recent_runs(limit=7)
+    drift_result = detect_rolling_drift(
+        recent_runs_newest_first=recent_runs,
+        window_size=7,
+        drift_threshold=drift_threshold,
+    )
+    print(f"Rolling drift check ({drift_result.drift_status}): {drift_result.drift_message}")
+
+    # 6. Generate HTML diff report
     report_path = generate_html_diff_report(
         current_run=current_summary,
         comparison=comparison,
         recent_runs=recent_runs,
         baseline_run=previous_run,
         model_name=prompt_config.model_config.model if hasattr(prompt_config, "model_config") and prompt_config.model_config else "gpt-4o-mini",
+        drift_result=drift_result
     )
     print(f"Generated HTML diff report: {report_path}")
 
@@ -130,6 +141,7 @@ async def execute_pipeline(
         comparison=comparison,
         baseline_run=previous_run,
         report_path=report_path,
+        drift_result=drift_result
     )
     if sent:
         print("Sent Slack alert.")
@@ -158,6 +170,12 @@ def parse_args() -> argparse.Namespace:
         default=0.08,
         help="Pass-rate drop threshold for critical failure (e.g., 0.08 = 8%%)",
     )
+    parser.add_argument(
+        "--drift-threshold",
+        type=float,
+        default=0.05,
+        help="Pass-rate drop threshold from first run in 7-run window (e.g., 0.05 = 5%%)"
+    )
     return parser.parse_args()
 
 
@@ -170,5 +188,6 @@ if __name__ == "__main__":
             max_concurrent=args.max_concurrent,
             warning_threshold=args.warning_threshold,
             critical_threshold=args.critical_threshold,
+            drift_threshold=args.drift_threshold
         )
     )

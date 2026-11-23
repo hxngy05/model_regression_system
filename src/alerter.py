@@ -4,7 +4,7 @@ from pathlib import Path
 from typing import Optional
 import requests
 
-from src.schemas import RunComparisonResult, RunEvaluationSummary
+from src.schemas import RollingDriftResult, RunComparisonResult, RunEvaluationSummary
 
 WEBHOOK_ENV_VAR = "SLACK_WEBHOOK_URL"
 
@@ -15,6 +15,7 @@ def build_slack_payload(
     baseline_run: Optional[RunEvaluationSummary] = None,
     report_path: Optional[Path] = None,
     report_url: Optional[str] = None,
+    drift_result: Optional[RollingDriftResult] = None
 ) -> dict:
     """Builds a structured Slack Block Kit payload for an evaluation run."""
     status = comparison.severity_status.lower()
@@ -88,6 +89,17 @@ def build_slack_payload(
             }
         )
 
+    if drift_result is not None and drift_result.drift_status == "slow_drift":
+        blocks.append(
+            {
+                "type": "section",
+                "text": {
+                    "type": "mrkdwn",
+                    "text": f":snail: *Slow Drift Alert:* {drift_result.drift_message}",
+                },
+            }
+        )
+
     return {
         "text": f"[{status.upper()}] {current_run.prompt_version}: {comparison.alert_message}",
         "blocks": blocks,
@@ -102,6 +114,7 @@ def send_slack_alert(
     report_url: Optional[str] = None,
     webhook_url: Optional[str] = None,
     timeout_seconds: float = 10.0,
+    drift_result: Optional[RollingDriftResult] = None
 ) -> bool:
     """Sends the Slack webhook notification if a webhook URL is configured.
 
@@ -117,6 +130,7 @@ def send_slack_alert(
         baseline_run=baseline_run,
         report_path=report_path,
         report_url=report_url,
+        drift_result=drift_result
     )
 
     response = requests.post(target_url, json=payload, timeout=timeout_seconds)

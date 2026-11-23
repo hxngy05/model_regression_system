@@ -3,7 +3,7 @@ from pathlib import Path
 from typing import Optional
 from jinja2 import Environment, FileSystemLoader
 
-from src.schemas import RunComparisonResult, RunEvaluationSummary
+from src.schemas import RollingDriftResult, RunComparisonResult, RunEvaluationSummary
 
 ROOT_DIR = Path(__file__).resolve().parent.parent
 DEFAULT_TEMPLATES_DIR = ROOT_DIR / "templates"
@@ -44,6 +44,7 @@ def generate_html_diff_report(
     model_name: str = "gpt-4o-mini",
     output_path: Optional[Path] = None,
     templates_dir: Path = DEFAULT_TEMPLATES_DIR,
+    drift_result: Optional[RollingDriftResult] = None
 ) -> Path:
     """Renders the HTML diff report to disk and returns the output file path."""
     env = Environment(loader=FileSystemLoader(str(templates_dir)), autoescape=True)
@@ -61,6 +62,7 @@ def generate_html_diff_report(
         chart_points=chart_points,
         polyline_points=polyline_points,
         model_name=model_name,
+        drift_result=drift_result
     )
 
     if output_path is None:

@@ -138,6 +138,13 @@
     </div>
   </div>
 
+  {% if drift_result and drift_result.drift_status == "slow_drift" %}
+    <div class="card" style="border-color: #f59e0b; background: #fffbeb;">
+      <h2 style="color: #92400e;">Rolling 7-Run Slow Drift Warning</h2>
+      <p style="margin: 0; color: #78350f;">{{ drift_result.drift_message }}</p>
+    </div>
+  {% endif %}
+
   <div class="card">
     <h2>Regressed Test Cases ({{ comparison.regressions | length }})</h2>
     {% if comparison.regressions %}

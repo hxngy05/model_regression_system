@@ -90,3 +90,17 @@ class RunComparisonResult(BaseModel):
     improvements: list[FlippedTestCase]
     severity_status: str = Field(..., description="'pass', 'warn', 'fail'")
     alert_message: str
+
+class RollingDriftResult(BaseModel):
+    window_size_required: int = 7
+    runs_available: int
+    window_start_run_id: str | None = None
+    window_end_run_id: str | None = None
+    window_start_pass_rate: float | None = None
+    latest_pass_rate: float | None = None
+    pass_rate_delta_from_start: float | None = None
+    drift_threshold: float = 0.05
+    drift_status: str = Field(
+        ..., description="'insufficient_data', 'none', or 'slow_drift'"
+    )
+    drift_message: str
